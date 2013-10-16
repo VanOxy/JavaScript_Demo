@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>The ultimate game</title>
+</head>
+<body onload="distribution();">
+
+<div id="table">
+	<img src="dos.png" width="100" id="carte0" onclick="choix(this,0);">
+	<img src="dos.png" width="100" id="carte1" onclick="choix(this,1);">
+	<img src="dos.png" width="100" id="carte2" onclick="choix(this,2);">
+	<img src="dos.png" width="100" id="carte3" onclick="choix(this,3);">
+	<img src="dos.png" width="100" id="carte4" onclick="choix(this,4);">
+	<img src="dos.png" width="100" id="carte5" onclick="choix(this,5);">
+	<img src="dos.png" width="100" id="carte6" onclick="choix(this,6);">
+	<img src="dos.png" width="100" id="carte7" onclick="choix(this,7);">
+	<br>
+	<img src="dos.png" width="100" id="carte8" onclick="choix(this,8);">
+	<img src="dos.png" width="100" id="carte9" onclick="choix(this,9);">
+	<img src="dos.png" width="100" id="carte10" onclick="choix(this,10);">
+	<img src="dos.png" width="100" id="carte11" onclick="choix(this,11);">
+	<img src="dos.png" width="100" id="carte12" onclick="choix(this,12);">
+	<img src="dos.png" width="100" id="carte13" onclick="choix(this,13);">
+	<img src="dos.png" width="100" id="carte14" onclick="choix(this,14);">
+	<img src="dos.png" width="100" id="carte15" onclick="choix(this,15);">
+</div>
+<div id="table_joueur">
+	<h3>Joueur : <span id="score_joueur"></span>pts</h2>
+	<img src="dos.png" width="100" id="joueur0">
+	<img src="dos.png" width="100" id="joueur1">
+	<img src="dos.png" width="100" id="joueur2">
+	<img src="dos.png" width="100" id="joueur3">
+</div>
+<div id="table_croupier">
+	<h3>Croupier : <span id="score_croupier"></span>pts</h2>
+	<img src="dos.png" width="100" id="croupier0">
+	<img src="dos.png" width="100" id="croupier1">
+	<img src="dos.png" width="100" id="croupier2">
+	<img src="dos.png" width="100" id="croupier3">
+</div>
+<input type="button" value="Rejouer !" onclick="location.reload()">
+<script>
+<!--
+var pioche=new Array(false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false);
+var paquet=new Array(16);
+var joueur=new Array(4);
+var nb_joueur=0;
+var croupier=new Array(4);
+var nb_croupier=0;
+
+//Distribution des cartes en début de partie
+function distribution() {
+	
+	for (i=0;i<16;i++) {
+		do {
+// en fait Math.random() retourne une val entre 0 et 1 Ex:0.493
+			unite=Math.floor(1+4*Math.random());
+			dizaine=Math.floor(1+4*Math.random());
+			paquet[i]=10*dizaine+unite;
+			doublon=false;
+			for (j=0;j<i;j++) {
+				if (paquet[i]==paquet[j]) doublon=true;
+			}
+		} while(doublon);
+	}	
+	score_croupier=document.getElementById("score_croupier");
+	score_croupier.innerHTML=0;
+	score_joueur=document.getElementById("score_joueur");
+	score_joueur.innerHTML=0;	
+}
+
+//clic sur une image
+function choix(image,n) {
+	if (pioche[n]==false) {
+		//on retourne une carte
+		image.src=paquet[n]+".png";
+		joueur[nb_joueur]=paquet[n];
+
+		//la carte retournée apparaît dans la main du joueur
+		carte=document.getElementById("joueur"+nb_joueur);
+		carte.src=paquet[n] +".png";
+
+		nb_joueur++;
+		pioche[n]=true;
+		if (nb_joueur==4) choix_croupier();
+	}
+}
+
+//Le croupier pioche ses cartes
+function choix_croupier() {
+	do {
+		choix=Math.floor(16*Math.random());
+		if (pioche[choix]==false) {
+			carte_table=document.getElementById("carte"+choix);
+			carte_croupier=document.getElementById("croupier"+nb_croupier);
+			carte_table.src=paquet[choix]+".png";
+			carte_croupier.src=paquet[choix]+".png";
+			croupier[nb_croupier]=paquet[choix];
+			pioche[choix]=true;
+			nb_croupier++;
+		}
+	} while(nb_croupier<4);
+	points();
+}
+
+//calcul des points	
+function points() {
+
+	var points_croupier=0;
+	var points_joueur=0;
+	
+	if ( (joueur[0]%10==joueur[1]%10) && (joueur[0]%10==joueur[2]%10) && (joueur[0]%10==joueur[3]%10) ) points_joueur=10;
+	else if ((Math.floor(joueur[0]/10)==Math.floor(joueur[1]/10)) && 
+			(Math.floor(joueur[0]/10)==Math.floor(joueur[2]/10)) && 
+			(Math.floor(joueur[0]/10)==Math.floor(joueur[3]/10)) ) points_joueur=8;
+	else if ((joueur[0]%10==joueur[1]%10) && 
+			(joueur[0]%10==joueur[2]%10)) points_joueur=6;
+	else if ((joueur[0]%10==joueur[2]%10) && 
+			(joueur[0]%10==joueur[3]%10)) points_joueur=6;
+	else if ((joueur[0]%10==joueur[1]%10) && 
+			(joueur[0]%10==joueur[3]%10)) points_joueur=6;
+	else if ((joueur[1]%10==joueur[2]%10) && 
+			(joueur[1]%10==joueur[3]%10)) points_joueur=6;
+	else if ((joueur[0]%10==joueur[1]%10) && 
+			(joueur[2]%10==joueur[3]%10)) points_joueur=4;
+	else if ((joueur[0]%10==joueur[2]%10) && 
+			(joueur[1]%10==joueur[3]%10)) points_joueur=4;
+	else if ((joueur[0]%10==joueur[3]%10) && 
+			(joueur[1]%10==joueur[2]%10)) points_joueur=4;
+	else if (joueur[0]%10==joueur[1]%10) points_joueur=2;
+	else if (joueur[0]%10==joueur[2]%10) points_joueur=2;
+	else if (joueur[0]%10==joueur[3]%10) points_joueur=2;
+	else if (joueur[1]%10==joueur[2]%10) points_joueur=2;
+	else if (joueur[1]%10==joueur[3]%10) points_joueur=2;
+	else if (joueur[2]%10==joueur[3]%10) points_joueur=2;
+	
+	//mise à jour des points du joueur dans la page
+	score_joueur=document.getElementById("score_joueur");
+	score_joueur.innerHTML=	points_joueur;	
+
+	if ( (croupier[0]%10==croupier[1]%10) && 
+		(croupier[0]%10==croupier[2]%10) && 
+		(croupier[0]%10==croupier[3]%10) ) points_croupier=10;
+	else if ( (Math.floor(croupier[0]/10)==Math.floor(croupier[1]/10)) && 
+			(Math.floor(croupier[0]/10)==Math.floor(croupier[2]/10)) && 
+			(Math.floor(croupier[0]/10)==Math.floor(croupier[3]/10)) ) points_croupier=8;
+	else if ((croupier[0]%10==croupier[1]%10) && 
+			(croupier[0]%10==croupier[2]%10)) points_croupier=6;
+	else if ((croupier[0]%10==croupier[2]%10) && 
+			(croupier[0]%10==croupier[3]%10)) points_croupier=6;
+	else if ((croupier[0]%10==croupier[1]%10) && 
+			(croupier[0]%10==croupier[3]%10)) points_croupier=6;
+	else if ((croupier[1]%10==croupier[2]%10) && 
+			(croupier[1]%10==croupier[3]%10)) points_croupier=6;
+	else if ((croupier[0]%10==croupier[1]%10) && 
+			(croupier[2]%10==croupier[3]%10)) points_croupier=4;
+	else if ((croupier[0]%10==croupier[2]%10) && 
+			(croupier[1]%10==croupier[3]%10)) points_croupier=4;
+	else if ((croupier[0]%10==croupier[3]%10) && 
+			(croupier[1]%10==croupier[2]%10)) points_croupier=4;
+	else if (croupier[0]%10==croupier[1]%10) points_croupier=2;
+	else if (croupier[0]%10==croupier[2]%10) points_croupier=2;
+	else if (croupier[0]%10==croupier[3]%10) points_croupier=2;
+	else if (croupier[1]%10==croupier[2]%10) points_croupier=2;
+	else if (croupier[1]%10==croupier[3]%10) points_croupier=2;
+	else if (croupier[2]%10==croupier[3]%10) points_croupier=2;
+	
+	//mise à jour des points du croupier dans la page
+	score_croupier=document.getElementById("score_croupier");
+	score_croupier.innerHTML=points_croupier;	
+	
+	//qui a gagné ?
+	if (points_croupier>points_joueur) alert("Le croupier l'emporte !");
+	else if (points_croupier<points_joueur) alert("Vous avez gagné !");
+	else alert("Égalité !");
+	}
+-->
+</script>
+</body>
+</html>
